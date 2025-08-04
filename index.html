@@ -333,17 +333,6 @@
 
   <div id="lovePopup">
     <div class="popup-content">
-      <div class="popup-close" onclick="closeLovePopup()">×</div>
-      <div style="font-size: 1.2rem; color: #888; margin-bottom: 10px; text-align: center;">
-        ✨ Found First Secret Message ✨
-      </div>
-      ❤️ Congratulations — you blew up 10 balloons!
-      <br/><br/>
-      On your birthday, I want you to know that my heart chose you long before I understood what love truly was. Every smile you give me, every word you say, every time you hold my hand — I feel lucky to be yours.
-      <br/><br/>
-      May your dreams be as beautiful as you are, and your year ahead as wonderful as the love we share.
-      <br/><br/>
-      Happy Birthday, my love. Forever and always, you have my heart. ❤️
     </div>
   </div>
 
@@ -446,12 +435,44 @@
     }
 
     function incrementScore() {
-      score++;
-      document.getElementById('score').textContent = score;
-      if (score === 10) {
-        document.getElementById('lovePopup').style.display = 'flex';
-      }
+    score++;
+    document.getElementById('score').textContent = score;
+
+    if (score === 10) {
+      showLovePopup("✨ Found First Secret Message ✨", `
+        ❤️ Congratulations — you blew up 10 balloons!
+        <br/><br/>
+        On your birthday, I want you to know that my heart chose you long before I understood what love truly was. Every smile you give me, every word you say, every time you hold my hand — I feel lucky to be yours.
+        <br/><br/>
+        May your dreams be as beautiful as you are, and your year ahead as wonderful as the love we share.
+        <br/><br/>
+        Happy Birthday, my love. Forever and always, you have my heart. ❤️
+      `);
     }
+
+    if (score === 20) {
+      showLovePopup("💖 Secret Level Unlocked 💖", `
+        🎉 Wow! You popped 50 balloons! 🎈<br/><br/>
+        Love isn't just in the grand moments — it's in every small gesture, every shared laugh, and every pop of joy like this one.
+        <br/><br/>
+        You're the magic in my life, and today you've filled it with even more sparkle. ✨
+        <br/><br/>
+        Here's to more adventures, surprises, and infinite love. Happy Birthday again, sweetheart. Love You Rafayat 💕
+      `);
+    }
+  }
+
+  function showLovePopup(title, message) {
+    const popupContent = document.querySelector('.popup-content');
+    popupContent.innerHTML = `
+      <div class="popup-close" onclick="closeLovePopup()">×</div>
+      <div style="font-size: 1.2rem; color: #888; margin-bottom: 10px; text-align: center;">
+        ${title}
+      </div>
+      ${message}
+    `;
+    document.getElementById('lovePopup').style.display = 'flex';
+  }
 
     function closeLovePopup() {
       document.getElementById('lovePopup').style.display = 'none';
