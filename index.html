@@ -399,8 +399,14 @@
         setTimeout(() => balloon.remove(), 300);
       }
 
-      balloon.addEventListener('click', popBalloon);
-      balloon.addEventListener('touchstart', popBalloon);
+      balloon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        popBalloon(e);
+      });
+      balloon.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+        popBalloon(e);
+      });
 
       document.body.appendChild(balloon);
 
@@ -424,7 +430,6 @@
       popup.style.display = 'none';
     }
 
-    // ✅ Close popup if clicked outside
     document.getElementById('lovePopup').addEventListener('click', function(event) {
       const popupBox = document.querySelector('.popup-content');
       if (!popupBox.contains(event.target)) {
