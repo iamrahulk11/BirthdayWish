@@ -22,7 +22,6 @@
       justify-content: center;
       flex-direction: column;
       z-index: 2;
-      pointer-events: none;
     }
 
     .cake {
@@ -106,35 +105,6 @@
 
     .message.show { opacity: 1; }
 
-    .poem-box {
-      margin-top: 20px;
-      width: 320px;
-      height: 120px;
-      overflow-y: scroll;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      background: rgba(255, 255, 255, 0.4);
-      border: 2px solid #ffb6c1;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      pointer-events: auto;
-      position: relative;
-      scroll-behavior: smooth;
-    }
-
-    .poem-box::-webkit-scrollbar {
-      display: none;
-    }
-
-    .poem-content {
-      display: inline-block;
-      padding: 10px;
-      color: #d63384;
-      text-align: center;
-      font-size: 1rem;
-      line-height: 1.6;
-    }
-
     canvas {
       position: fixed;
       top: 0;
@@ -152,7 +122,8 @@
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       animation: fallDown linear forwards;
       cursor: pointer;
-      z-index: 3;
+      z-index: 5;
+      pointer-events: auto;
     }
 
     .balloon::after {
@@ -222,33 +193,9 @@
         <div class="flame"></div>
       </div>
     </div>
-
     <div class="message" id="message">
       🎉 Happy Birthday, Princess! 🎉<br>
       May your day be filled with sparkle and sweet surprises! 💖
-    </div>
-
-    <div class="poem-box" id="poemBox">
-      <div class="poem-content" id="poemContent">
-        <!-- Duplicate poem multiple times to create loop -->
-        <div>🎵 Roses are pink, skies are blue,</div>
-        <div>This day is special, just like you!</div>
-        <div>Let joy and laughter fill the air,</div>
-        <div>And sweet memories everywhere.</div>
-        <div>Candles glowing, dreams so bright,</div>
-        <div>Make a wish with all your might.</div>
-        <div>With cake and love and hearts so true,</div>
-        <div>Happy Birthday just for you! 🎵</div>
-        <!-- Repeat -->
-        <div>🎵 Roses are pink, skies are blue,</div>
-        <div>This day is special, just like you!</div>
-        <div>Let joy and laughter fill the air,</div>
-        <div>And sweet memories everywhere.</div>
-        <div>Candles glowing, dreams so bright,</div>
-        <div>Make a wish with all your might.</div>
-        <div>With cake and love and hearts so true,</div>
-        <div>Happy Birthday just for you! 🎵</div>
-      </div>
     </div>
   </div>
 
@@ -294,10 +241,12 @@
     function cutCake() {
       const cake = document.getElementById('cake');
       const message = document.getElementById('message');
+
       cake.classList.toggle('split');
       if (!message.classList.contains('show')) {
         message.classList.add('show');
       }
+
       if (!confettiLaunched) {
         confettiLaunched = true;
         for (let i = 0; i < 200; i++) {
@@ -312,6 +261,7 @@
           });
         }
       }
+
       if (!animationStarted) {
         animationStarted = true;
         animateConfetti();
@@ -347,15 +297,6 @@
 
     setInterval(createBalloon, 800);
     document.getElementById('cake').addEventListener('click', cutCake);
-
-    // Smooth auto-scroll loop for poem
-    setInterval(() => {
-      const poemBox = document.getElementById('poemBox');
-      poemBox.scrollTop += 1;
-      if (poemBox.scrollTop >= poemBox.scrollHeight - poemBox.clientHeight) {
-        poemBox.scrollTop = 0;
-      }
-    }, 60); // Adjust speed here
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
