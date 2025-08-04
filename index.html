@@ -12,12 +12,13 @@
       -moz-user-select: none;
       -ms-user-select: none;
     }
-    
+
     img {
       pointer-events: none;
       -webkit-user-drag: none;
       user-drag: none;
     }
+
     html, body {
       height: 100%;
       margin: 0;
@@ -179,7 +180,55 @@
       border-radius: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       z-index: 10;
-      font-family: 'Segoe UI', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+      font-family: 'Comic Sans MS', cursive;
+    }
+
+    #lovePopup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+    .popup-content {
+  position: relative;
+  background: white;
+  padding: 30px 50px;
+  border-radius: 20px;
+  font-size: 2rem;
+  color: #e91e63;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  animation: fadeIn 1s ease;
+  pointer-events: auto;
+  max-width: 90%;
+  text-align: center;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.3s ease;
+  z-index: 10000;
+}
+.popup-close:hover {
+  color: #e91e63;
+}
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     @media (max-width: 600px) {
@@ -223,6 +272,25 @@
     <div class="message" id="message">
       🎉 Happy Birthday, Rafayat! 🎉<br>
       May your day be filled with sparkle and sweet surprises! 💖
+    </div>
+  </div>
+
+  <!-- ❤️ Love You Popup -->
+  <div id="lovePopup">
+  <div class="popup-content">
+<div class="popup-close" onclick="closeLovePopup()">×</div>
+    <div style="font-size: 1.2rem; color: #888; margin-bottom: 10px; text-align: center;">
+      ✨ Found First Secret Message ✨
+    </div>
+      ❤️ Congratulations — you blew up 10 balloons!
+<br/>
+<br/>
+
+On your birthday, I want you to know that my heart chose you long before I understood what love truly was. Every smile you give me, every word you say, every time you hold my hand — I feel lucky to be yours.
+
+May your dreams be as beautiful as you are, and your year ahead as wonderful as the love we share.
+
+Happy Birthday, my love. Forever and always, you have my heart. ❤️
     </div>
   </div>
 
@@ -308,7 +376,6 @@
         setTimeout(() => balloon.remove(), 300);
       }
 
-      // Support both desktop and mobile
       balloon.addEventListener('click', popBalloon);
       balloon.addEventListener('touchstart', popBalloon);
 
@@ -324,7 +391,15 @@
     function incrementScore() {
       score++;
       document.getElementById('score').textContent = score;
+
+      if (score === 10) {
+        document.getElementById('lovePopup').style.display = 'flex';
+      }
     }
+function closeLovePopup() {
+  const popup = document.getElementById('lovePopup');
+  popup.style.display = 'none';
+}
 
     setInterval(createBalloon, 800);
     document.getElementById('cake').addEventListener('click', cutCake);
@@ -337,6 +412,3 @@
   </script>
 </body>
 </html>
-
-
-
