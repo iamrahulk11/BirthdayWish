@@ -53,6 +53,7 @@
       display: flex;
       pointer-events: auto;
       z-index: 11;
+      touch-action: manipulation;
     }
 
     .cake .half {
@@ -457,8 +458,7 @@
         <br/><br/>
         You're the magic in my life, and today you've filled it with even more sparkle. ✨
         <br/><br/>
-        Here's to more adventures, surprises, and infinite love. Happy Birthday again, sweetheart. 
-        <br/> Love You Rafayat 💕
+        Here's to more adventures, surprises, and infinite love. Happy Birthday again, sweetheart. 💕
       `);
     }
   }
@@ -487,8 +487,12 @@
     });
 
     setInterval(createBalloon, 800);
+
     document.getElementById('cake').addEventListener('click', cutCake);
-    document.getElementById('cake').addEventListener('touchstart', cutCake);
+    document.getElementById('cake').addEventListener('touchend', function (e) {
+      e.preventDefault();
+      cutCake();
+    });
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
@@ -497,4 +501,3 @@
   </script>
 </body>
 </html>
-
