@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Happy Birthday!</title>
   <style>
     html, body {
@@ -167,6 +168,19 @@
       z-index: 10;
       font-family: 'Comic Sans MS', cursive;
     }
+
+    @media (max-width: 600px) {
+      .cake {
+        transform: scale(0.7);
+      }
+      .scoreboard {
+        font-size: 1rem;
+        padding: 8px 14px;
+      }
+      .message {
+        font-size: 1.4rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -274,12 +288,16 @@
       balloon.style.left = Math.random() * (window.innerWidth - 40) + 'px';
       balloon.style.animationDuration = '10s';
 
-      balloon.addEventListener('click', (e) => {
+      function popBalloon(e) {
         e.stopPropagation();
         balloon.classList.add('popped');
         incrementScore();
         setTimeout(() => balloon.remove(), 300);
-      });
+      }
+
+      // Support both desktop and mobile
+      balloon.addEventListener('click', popBalloon);
+      balloon.addEventListener('touchstart', popBalloon);
 
       document.body.appendChild(balloon);
 
@@ -297,6 +315,7 @@
 
     setInterval(createBalloon, 800);
     document.getElementById('cake').addEventListener('click', cutCake);
+    document.getElementById('cake').addEventListener('touchstart', cutCake);
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
