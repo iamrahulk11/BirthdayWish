@@ -1,2 +1,0 @@
-# BirthdayWish
-Greetings: Happy birthday
