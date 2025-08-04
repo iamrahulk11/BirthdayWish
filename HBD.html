@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Happy Birthday!</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive;
+      background: linear-gradient(to top right, #ffd6e0, #fff0f5);
+      overflow: hidden;
+      cursor: url('https://cdn-icons-png.flaticon.com/512/685/685352.png') 10 10, auto;
+    }
+
+    .wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .cake {
+      position: relative;
+      width: 200px;
+      height: 180px;
+      perspective: 1000px;
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .cake .half {
+      width: 50%;
+      transition: transform 1s ease;
+      transform-origin: center center;
+    }
+
+    .cake.split .left {
+      transform: translateX(-120px) rotateZ(-15deg);
+    }
+
+    .cake.split .right {
+      transform: translateX(120px) rotateZ(15deg);
+    }
+
+    .layer {
+      width: 100%;
+      height: 60px;
+      border-radius: 100px / 30px;
+      background: #ffb6c1;
+      border: 2px solid #ff85a2;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .layer:nth-child(1) { background: #ff9eb6; }
+    .layer:nth-child(2) { background: #ffb6c1; }
+    .layer:nth-child(3) { background: #ffe4e9; }
+
+    .candle {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .candle div {
+      width: 10px;
+      height: 40px;
+      background: #ff69b4;
+      border-radius: 4px;
+    }
+
+    .flame {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      background: radial-gradient(circle, yellow 0%, orange 100%);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      animation: flicker 1s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+      50% { transform: translateX(-50%) scale(1.3); opacity: 0.7; }
+    }
+
+    .message {
+      font-size: 1.8rem;
+      text-align: center;
+      color: #c2185b;
+      margin-top: 30px;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .message.show { opacity: 1; }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .balloon {
+      position: absolute;
+      top: -60px;
+      width: 40px;
+      height: 55px;
+      background: radial-gradient(circle at 30% 30%, #ffc0cb, #ff69b4);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: fallDown linear forwards;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      width: 2px;
+      height: 20px;
+      background: #aaa;
+      transform: translateX(-50%);
+    }
+
+    @keyframes fallDown {
+      from { transform: translateY(0); opacity: 1; }
+      to   { transform: translateY(120vh); opacity: 1; }
+    }
+
+    .popped {
+      animation: pop 0.3s forwards !important;
+    }
+
+    @keyframes pop {
+      to {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .scoreboard {
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      background: #fff0f5;
+      color: #d63384;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 10px 18px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 10;
+      font-family: 'Comic Sans MS', cursive;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="scoreboard" id="scoreboard">
+    🎈 Balloons Popped: <span id="score">0</span>
+  </div>
+
+  <div class="wrapper">
+    <div class="cake" id="cake">
+      <div class="half left">
+        <div class="layer"></div>
+        <div class="layer"></div>
+        <div class="layer"></div>
+      </div>
+      <div class="half right">
+        <div class="layer"></div>
+        <div class="layer"></div>
+        <div class="layer"></div>
+      </div>
+      <div class="candle">
+        <div></div>
+        <div class="flame"></div>
+      </div>
+    </div>
+    <div class="message" id="message">
+      🎉 Happy Birthday, Princess! 🎉<br>
+      May your day be filled with sparkle and sweet surprises! 💖
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let confetti = [];
+    let confettiLaunched = false;
+    let animationStarted = false;
+    let score = 0;
+    let cakeSplit = false;
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.strokeStyle = c.color;
+        ctx.lineWidth = c.r;
+        ctx.moveTo(c.x + c.tilt + c.r, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
+        ctx.stroke();
+      });
+
+      confetti.forEach(c => {
+        c.y += c.d;
+        c.tiltAngle += 0.05;
+        c.tilt = Math.sin(c.tiltAngle) * 10;
+        if (c.y > canvas.height) {
+          c.y = -10;
+          c.x = Math.random() * canvas.width;
+        }
+      });
+
+      requestAnimationFrame(animateConfetti);
+    }
+
+    function cutCake() {
+  const cake = document.getElementById('cake');
+  const message = document.getElementById('message');
+
+  // Toggle split class
+  cake.classList.toggle('split');
+
+  // Show birthday message only once
+  if (!message.classList.contains('show')) {
+    message.classList.add('show');
+  }
+
+  // Confetti logic
+  if (!confettiLaunched) {
+    confettiLaunched = true;
+    for (let i = 0; i < 200; i++) {
+      confetti.push({
+        x: Math.random() * canvas.width,
+        y: -10,
+        r: random(2, 6),
+        d: random(1, 3),
+        tilt: random(-10, 10),
+        tiltAngle: 0,
+        color: ['#ffb6c1', '#ff69b4', '#ffd1dc', '#fff0f5'][Math.floor(Math.random() * 4)]
+      });
+    }
+  }
+
+  if (!animationStarted) {
+    animationStarted = true;
+    animateConfetti();
+  }
+}
+
+    function createBalloon() {
+      const balloon = document.createElement('div');
+      balloon.className = 'balloon';
+      balloon.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+      balloon.style.animationDuration = '10s';
+
+      balloon.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent click on cake
+        balloon.classList.add('popped');
+        incrementScore();
+        setTimeout(() => balloon.remove(), 300);
+      });
+
+      document.body.appendChild(balloon);
+
+      setTimeout(() => {
+        if (balloon && !balloon.classList.contains('popped')) {
+          balloon.remove();
+        }
+      }, 10000);
+    }
+
+    function incrementScore() {
+      score++;
+      document.getElementById('score').textContent = score;
+    }
+
+    setInterval(createBalloon, 800);
+    document.getElementById('cake').addEventListener('click', cutCake);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
